@@ -1,0 +1,62 @@
+version: "3.9"
+
+services:
+  hash-translator:
+    container_name: hash-translator
+    image: hashtranslator:latest
+    build: ./hashtranslator-service
+    restart: on-failure
+    env_file:
+      - .env
+    ports:
+      - "8081:8081"
+    networks:
+      - mongodb_net
+      - service_net
+
+  authorization-service:
+    container_name: authorization-service
+    image: authorization:latest
+    build: ./authorization-service
+    restart: on-failure
+    env_file:
+      - .env
+    networks:
+      - postgres_go_net
+      - service_net
+    ports:
+      - "8080:8080"
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    hostname: postgres
+    env_file:
+      - .env
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: on-failure
+    networks:
+      - postgres_go_net
+
+  mongodb:
+    image: mongo:7.0.4-jammy
+    container_name: mongodb
+    hostname: mongodb
+    ports:
+      - "27017:27017"
+    env_file:
+      - .env
+    volumes:
+      - ./volumes/mongo:/var/lib/mongodb/data
+    networks:
+      - mongodb_net
+networks:
+  postgres_go_net:
+    driver: bridge
+  mongodb_net:
+    driver: bridge
+  service_net:
+    driver: bridge
