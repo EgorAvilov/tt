@@ -1,0 +1,9 @@
+spring:
+  data:
+    mongodb:
+      uri: ${MONGODB_URL:mongodb://localhost:27017/tt1}
+server:
+  port: ${HASHTRANSLATOR_SERVER_PORT:8081}
+
+
+
